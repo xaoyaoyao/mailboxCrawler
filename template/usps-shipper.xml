@@ -1,0 +1,36 @@
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+  <xsl:output encoding="UTF-8" method="xml" indent="yes"/>
+    <xsl:template match="/">
+        <orderList>
+            <spiderOrder>
+			    <!-- order number必有 一般使用[contains(text(),'Order Number')]条件可以快速定位-->
+				<xsl:variable name="trackingNum" select="normalize-space(//p[contains(., 'Tracking Number')]/text()[contains(., 'Tracking Number')]/following-sibling::a/text())"/>
+                <orderNum>
+					<xsl:value-of select="normalize-space($trackingNum)"/>
+                </orderNum>
+				<xsl:variable name="name1">Tracking #:</xsl:variable>
+				<xsl:variable name="name2" select="normalize-space($trackingNum)"/>
+				<name>
+					<xsl:value-of select="concat($name1, ' ', $name2)"/>
+				</name>
+
+				<!-- 快递单号 一般使用[contains(text(),'Tracking Number')]条件可以快速定位-->
+				<trackingNum>
+					<xsl:value-of select="normalize-space(//p[contains(., 'Tracking Number')]/text()[contains(., 'Tracking Number')]/following-sibling::a/text())"/>
+				</trackingNum>
+				<!-- 快递单URL 一般为从有链接的trackingNumber处获得的属性值href-->
+				<trackingUrl>
+					<xsl:value-of select="normalize-space(//p[contains(., 'Tracking Number')]/text()[contains(., 'Tracking Number')]/following-sibling::a/@href)"/>
+				</trackingUrl>
+				<!-- 快递公司 邮件里常见为Carrier表示 一般使用[contains(text(),'Carrier')]条件可以快速定位-->
+				<deliveryCompany>USPS</deliveryCompany>
+				
+				<!-- 发货时间 邮件里常见为shiptime-->
+                <deliveryTime>
+					<xsl:value-of select="normalize-space(substring-after(//div[contains(., 'Date of email request')]/text()[contains(., 'Date of email request')], ':'))"/>
+                </deliveryTime>
+
+           </spiderOrder>
+        </orderList>
+  </xsl:template>
+</xsl:stylesheet>
